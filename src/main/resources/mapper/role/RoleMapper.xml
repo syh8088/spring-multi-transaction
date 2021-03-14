@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.transaction.domain.role.RoleMapper">
+    <insert id="setRole">
+        INSERT INTO DB_TEST2.role SET
+            member_id = #{memberId},
+            name = #{name}
+    </insert>
+
+</mapper>

@@ -1,0 +1,88 @@
+spring:
+    jpa:
+        hibernate:
+            use-new-id-generator-mappings: false
+            ddl-auto: none
+            naming:
+                implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        show-sql: true
+        properties:
+            hibernate:
+                enable_lazy_load_no_trans: false
+                format_sql: true
+                default_batch_fetch_size: 1000
+        open-in-view: false
+
+    profiles:
+        active: local
+    servlet:
+        multipart:
+            max-file-size: 250MB
+            max-request-size: 250MB
+
+    datasource:
+        main:
+            # 개인 RDS USERNAME
+            username: ''
+            # 개인 RDS PASSWORD
+            password: ''
+            driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+            jdbc-url: ''
+            maximum-pool-size: 4
+        sub:
+            # 개인 RDS USERNAME
+            username: ''
+            # 개인 RDS PASSWORD
+            password: ''
+            driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+            jdbc-url: ''
+            maximum-pool-size: 4
+
+
+
+
+
+#        hikari:
+#            maximum-pool-size: 3
+        tomcat:
+            testOnBorrow: true
+            testWhileIdle: true
+            validationInterval: 1800000
+            validationQuery: 'SELECT 1'
+            timeBetweenEvictionRunsMillis: 2000000
+            minEvictableIdleTimeMillis: 3600000
+    mvc:
+        throw-exception-if-no-handler-found: true
+    resources:
+        add-mappings: false
+    main:
+        allow-bean-definition-overriding: true
+
+#sub:
+# datasource:
+#  # 개인 RDS USERNAME
+#  username: ''
+#  # 개인 RDS PASSWORD
+#  password: ''
+#  url:
+#  driver-class-name: org.mariadb.jdbc.Driver
+
+
+
+
+
+
+mybatis:
+    type-aliases-package: com.transaction
+    mapper-locations: classpath*:/mapper/**/*.xml
+    configuration:
+        map-underscore-to-camel-case: true
+debug: true
+logging:
+    level:
+        org.springframework: debug
+
+server:
+    port: 9200
+
