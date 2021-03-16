@@ -49,14 +49,6 @@ public class MainHikariSchemaDataSourceConfig extends DatabaseConfig {
 
     /* -----------------mybatis 셋팅------------------------------------- */
 
-
-    @Bean(name = name + "TxManager")
-    @Primary
-    public PlatformTransactionManager mainTxManager(@Qualifier(name + "DataSource") DataSource dataSource) {
-        return new DataSourceTransactionManager(dataSource);
-    }
-
-
     @Bean(name = name + "SessionFactory")
     @Primary
     public SqlSessionFactory sqlSessionFactory(@Qualifier(name + "DataSource") DataSource dataSource) throws Exception {
@@ -71,6 +63,7 @@ public class MainHikariSchemaDataSourceConfig extends DatabaseConfig {
         return new SqlSessionTemplate(mainSessionFactory);
     }
 
+/*
     @Bean(name = name + "MapperFactoryBean")
     public MapperFactoryBean<MemberMapper> memberMapper(@Qualifier(name + "SessionFactory") SqlSessionFactory mainSessionFactory) {
 
@@ -79,10 +72,12 @@ public class MainHikariSchemaDataSourceConfig extends DatabaseConfig {
         return factoryBean;
     }
 
-
-
-
-
+    @Bean(name = name + "TxManager")
+    @Primary
+    public PlatformTransactionManager mainTxManager(@Qualifier(name + "DataSource") DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
+    }
+*/
 
 
     /* -----------------JPA 셋팅------------------------------------- */
@@ -99,7 +94,7 @@ public class MainHikariSchemaDataSourceConfig extends DatabaseConfig {
     }
 
     @Bean(name = name + "TransactionManager")
-    //@Primary
+    @Primary
     public PlatformTransactionManager transactionManager(@Qualifier(name + "EntityManagerFactory") EntityManagerFactory entityManagerFactory) {
         JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
         jpaTransactionManager.setEntityManagerFactory(entityManagerFactory);

@@ -12,7 +12,8 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "role2", schema = "syh80882")
+@Table(name = "role2", schema = "DB_TEST2")
+//@Table(name = "role2", schema = "syh80882")
 public class Role {
 
     @Id

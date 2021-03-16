@@ -45,13 +45,6 @@ public class SubHikariSchemaDataSourceConfig extends DatabaseConfig {
 
     /* -----------------mybatis 셋팅------------------------------------- */
 
-    @Bean(name = name + "TxManager")
-   // @Primary
-    public PlatformTransactionManager subTxManager(@Qualifier(name + "DataSource") DataSource dataSource) {
-        return new DataSourceTransactionManager(dataSource);
-    }
-
-
     @Bean(name = name + "SessionFactory")
     public SqlSessionFactory sqlSessionFactory(@Qualifier(name + "DataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
@@ -65,7 +58,7 @@ public class SubHikariSchemaDataSourceConfig extends DatabaseConfig {
         return new SqlSessionTemplate(subSessionFactory);
     }
 
-    @Bean(name = name + "MapperFactoryBean")
+/*    @Bean(name = name + "MapperFactoryBean")
     public MapperFactoryBean<RoleMapper> roleMapper(@Qualifier(name + "SessionFactory") SqlSessionFactory subSessionFactory) {
 
         MapperFactoryBean<RoleMapper> factoryBean = new MapperFactoryBean<>(RoleMapper.class);
@@ -73,6 +66,11 @@ public class SubHikariSchemaDataSourceConfig extends DatabaseConfig {
         return factoryBean;
     }
 
+    @Bean(name = name + "TxManager")
+    // @Primary
+    public PlatformTransactionManager subTxManager(@Qualifier(name + "DataSource") DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
+    }*/
 
     /* -----------------JPA 셋팅------------------------------------- */
     @Bean(name = name + "EntityManagerFactory")
