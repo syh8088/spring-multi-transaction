@@ -13,8 +13,9 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 @RequiredArgsConstructor
 //@Transactional(transactionManager = "mainTransactionManager")
 //@Transactional(transactionManager = "subTransactionManager")
-@Transactional
+//@Transactional
 //@Transactional(transactionManager = "mainTxManager")
+@Transactional(transactionManager = "subTxManager")
 public class TransactionService {
 
     private final MemberService memberService;

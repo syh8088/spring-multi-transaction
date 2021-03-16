@@ -71,7 +71,7 @@ public class MainHikariSchemaDataSourceConfig extends DatabaseConfig {
         return new SqlSessionTemplate(mainSessionFactory);
     }
 
-    @Bean
+    @Bean(name = name + "MapperFactoryBean")
     public MapperFactoryBean<MemberMapper> memberMapper(@Qualifier(name + "SessionFactory") SqlSessionFactory mainSessionFactory) {
 
         MapperFactoryBean<MemberMapper> factoryBean = new MapperFactoryBean<>(MemberMapper.class);
