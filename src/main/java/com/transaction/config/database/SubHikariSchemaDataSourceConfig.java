@@ -1,16 +1,21 @@
 package com.transaction.config.database;
 
+import com.transaction.domain.member.MemberMapper;
+import com.transaction.domain.role.RoleMapper;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
+import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -39,6 +44,14 @@ public class SubHikariSchemaDataSourceConfig extends DatabaseConfig {
     }
 
     /* -----------------mybatis 셋팅------------------------------------- */
+
+    @Bean(name = name + "TxManager")
+   // @Primary
+    public PlatformTransactionManager subTxManager(@Qualifier(name + "DataSource") DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
+    }
+
+
     @Bean(name = name + "SessionFactory")
     public SqlSessionFactory sqlSessionFactory(@Qualifier(name + "DataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
@@ -48,9 +61,18 @@ public class SubHikariSchemaDataSourceConfig extends DatabaseConfig {
     }
 
     @Bean(name = name + "SqlSessionTemplate")
-    public SqlSessionTemplate firstSqlSessionTemplate(@Qualifier(name + "SessionFactory") SqlSessionFactory sqlSessionFactory) {
-        return new SqlSessionTemplate(sqlSessionFactory);
+    public SqlSessionTemplate firstSqlSessionTemplate(@Qualifier(name + "SessionFactory") SqlSessionFactory subSessionFactory) {
+        return new SqlSessionTemplate(subSessionFactory);
     }
+
+    @Bean
+    public MapperFactoryBean<RoleMapper> roleMapper(@Qualifier(name + "SessionFactory") SqlSessionFactory subSessionFactory) {
+
+        MapperFactoryBean<RoleMapper> factoryBean = new MapperFactoryBean<>(RoleMapper.class);
+        factoryBean.setSqlSessionFactory(subSessionFactory);
+        return factoryBean;
+    }
+
 
     /* -----------------JPA 셋팅------------------------------------- */
     @Bean(name = name + "EntityManagerFactory")

@@ -1,10 +1,13 @@
 package com.transaction.config.database;
 
+import com.transaction.domain.member.MemberMapper;
 import com.zaxxer.hikari.HikariDataSource;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
+import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -39,13 +42,21 @@ public class MainHikariSchemaDataSourceConfig extends DatabaseConfig {
         return new LazyConnectionDataSourceProxy(new HikariDataSource(this));
     }
 
-/*    @Bean(name = name + "TxManager")
+
+
+
+
+
+    /* -----------------mybatis 셋팅------------------------------------- */
+
+
+    @Bean(name = name + "TxManager")
     @Primary
     public PlatformTransactionManager mainTxManager(@Qualifier(name + "DataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
-    }*/
+    }
 
-    /* -----------------mybatis 셋팅------------------------------------- */
+
     @Bean(name = name + "SessionFactory")
     @Primary
     public SqlSessionFactory sqlSessionFactory(@Qualifier(name + "DataSource") DataSource dataSource) throws Exception {
@@ -56,9 +67,23 @@ public class MainHikariSchemaDataSourceConfig extends DatabaseConfig {
 
     @Bean(name = name + "SqlSessionTemplate")
     @Primary
-    public SqlSessionTemplate firstSqlSessionTemplate(@Qualifier(name + "SessionFactory") SqlSessionFactory sqlSessionFactory) {
-        return new SqlSessionTemplate(sqlSessionFactory);
+    public SqlSessionTemplate firstSqlSessionTemplate(@Qualifier(name + "SessionFactory") SqlSessionFactory mainSessionFactory) {
+        return new SqlSessionTemplate(mainSessionFactory);
     }
+
+    @Bean
+    public MapperFactoryBean<MemberMapper> memberMapper(@Qualifier(name + "SessionFactory") SqlSessionFactory mainSessionFactory) {
+
+        MapperFactoryBean<MemberMapper> factoryBean = new MapperFactoryBean<>(MemberMapper.class);
+        factoryBean.setSqlSessionFactory(mainSessionFactory);
+        return factoryBean;
+    }
+
+
+
+
+
+
 
     /* -----------------JPA 셋팅------------------------------------- */
     @Bean(name = name + "EntityManagerFactory")
@@ -74,7 +99,7 @@ public class MainHikariSchemaDataSourceConfig extends DatabaseConfig {
     }
 
     @Bean(name = name + "TransactionManager")
-    @Primary
+    //@Primary
     public PlatformTransactionManager transactionManager(@Qualifier(name + "EntityManagerFactory") EntityManagerFactory entityManagerFactory) {
         JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
         jpaTransactionManager.setEntityManagerFactory(entityManagerFactory);
