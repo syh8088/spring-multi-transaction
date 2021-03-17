@@ -87,34 +87,34 @@ public class MainHikariSchemaDataSourceConfig extends DatabaseConfig {
 
 
     /* -----------------JPA 셋팅------------------------------------- */
-//    @Bean(name = name + "EntityManagerFactory")
-//    @Primary
-//    public EntityManagerFactory entityManagerFactory(@Qualifier(name + "DataSource") DataSource dataSource) {
-//        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-//        factory.setDataSource(dataSource);
-//        factory.setPackagesToScan("com.transaction.entities");
-//        factory.setPersistenceUnitName(name);
-//        setConfigureEntityManagerFactory(factory);
-//
-//        return factory.getObject();
-//    }
-
-// 컨테이너가 관리하는 EntityManagerFactory를 생성.
     @Bean(name = name + "EntityManagerFactory")
     @Primary
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder, @Qualifier(name + "DataSource") DataSource dataSource) {
+    public EntityManagerFactory entityManagerFactory(@Qualifier(name + "DataSource") DataSource dataSource) {
+        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+        factory.setDataSource(dataSource);
+        factory.setPackagesToScan("com.transaction.entities");
+        factory.setPersistenceUnitName(name);
+        setConfigureEntityManagerFactory(factory);
 
-
-        return builder
-                .dataSource(dataSource)
-                .packages("com.transaction.entities")
-                .persistenceUnit(name)
-                .build();
+        return factory.getObject();
     }
+
+// 컨테이너가 관리하는 EntityManagerFactory를 생성.
+//    @Bean(name = name + "EntityManagerFactory")
+//    @Primary
+//    public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder, @Qualifier(name + "DataSource") DataSource dataSource) {
+//
+//
+//        return builder
+//                .dataSource(dataSource)
+//                .packages("com.transaction.entities")
+//                .persistenceUnit(name)
+//                .build();
+//    }
 
 
     @Bean(name = name + "TransactionManager")
-    //@Primary
+    @Primary
     public PlatformTransactionManager transactionManager(@Qualifier(name + "EntityManagerFactory") EntityManagerFactory entityManagerFactory) {
         JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
         jpaTransactionManager.setEntityManagerFactory(entityManagerFactory);
