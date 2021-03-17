@@ -11,6 +11,7 @@ import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -48,10 +49,18 @@ public class SubHikariSchemaDataSourceConfig extends DatabaseConfig {
     @Bean(name = name + "SessionFactory")
     public SqlSessionFactory sqlSessionFactory(@Qualifier(name + "DataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
-        sessionFactoryBean.setDataSource(dataSource);
+        setConfigureSqlSessionFactory(sessionFactoryBean, dataSource);
 
         return sessionFactoryBean.getObject();
     }
+
+/*    @Bean(name = name + "SessionFactory")
+    public SqlSessionFactory sqlSessionFactory(@Qualifier(name + "DataSource") DataSource dataSource) throws Exception {
+        SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
+        sessionFactoryBean.setDataSource(dataSource);
+
+        return sessionFactoryBean.getObject();
+    }*/
 
     @Bean(name = name + "SqlSessionTemplate")
     public SqlSessionTemplate firstSqlSessionTemplate(@Qualifier(name + "SessionFactory") SqlSessionFactory subSessionFactory) {
@@ -73,15 +82,26 @@ public class SubHikariSchemaDataSourceConfig extends DatabaseConfig {
     }*/
 
     /* -----------------JPA 셋팅------------------------------------- */
-    @Bean(name = name + "EntityManagerFactory")
-    public EntityManagerFactory entityManagerFactory(@Qualifier(name + "DataSource") DataSource dataSource) {
-        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-        factory.setDataSource(dataSource);
-        factory.setPackagesToScan("com.transaction.entities");
-        factory.setPersistenceUnitName(name);
-        setConfigureEntityManagerFactory(factory);
+//    @Bean(name = name + "EntityManagerFactory")
+//    public EntityManagerFactory entityManagerFactory(@Qualifier(name + "DataSource") DataSource dataSource) {
+//        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+//        factory.setDataSource(dataSource);
+//        factory.setPackagesToScan("com.transaction.entities");
+//        factory.setPersistenceUnitName(name);
+//        setConfigureEntityManagerFactory(factory);
+//
+//        return factory.getObject();
+//    }
 
-        return factory.getObject();
+    // 컨테이너가 관리하는 EntityManagerFactory를 생성.
+    @Bean(name = name + "EntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder, @Qualifier(name + "DataSource") DataSource dataSource) {
+
+        return builder
+                .dataSource(dataSource)
+                .packages("com.transaction.entities")
+                .persistenceUnit(name)
+                .build();
     }
 
     @Bean(name = name + "TransactionManager")

@@ -21,7 +21,8 @@ public abstract class DatabaseConfig extends HikariConfig {
                 "hibernate.hbm2ddl.auto", "none",
                 "hibernate.dialect", "org.hibernate.dialect.MariaDB53Dialect",
                 "hibernate.show_sql", "true",
-                "hibernate.format_sql", "true"
+                "hibernate.format_sql", "true",
+                "open-in-view", "false"
         ));
         factory.afterPropertiesSet();
     }

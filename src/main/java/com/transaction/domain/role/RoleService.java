@@ -17,7 +17,7 @@ public class RoleService {
     private final RoleMapper roleMapper;
     private final RoleRepository roleRepository;
 
-    public void saveWithRequired(int insertedMemberId) {
+    public void saveWithRequired(Long insertedMemberId) {
         System.out.println("LogicService --> currentTransactionName : {}  = " +  TransactionSynchronizationManager.getCurrentTransactionName());
         InsertRoleDto role = InsertRoleDto.createRole(insertedMemberId, "mybatis-name-test");
         roleMapper.setRole(role);
@@ -26,6 +26,8 @@ public class RoleService {
 
     public void jpaSaveWithRequired(Member member) {
         System.out.println("LogicService --> currentTransactionName : {}  = " +  TransactionSynchronizationManager.getCurrentTransactionName());
+
+        Role one = roleRepository.getOne(10L);
         Role role = Role.createRole(member, "jpa-name-test");
         roleRepository.save(role);
         throw new IllegalStateException("this method throw exception");
@@ -42,7 +44,7 @@ public class RoleService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public int saveWithRequiresNew(int insertedMemberId) {
+    public int saveWithRequiresNew(Long insertedMemberId) {
         InsertRoleDto MybatisRole = InsertRoleDto.createRole(insertedMemberId, "mybatis-REQUIRES_NEW-name-test");
         roleMapper.setRole(MybatisRole);
 
@@ -50,7 +52,7 @@ public class RoleService {
     }
 
     @Transactional(propagation = Propagation.NESTED)
-    public int saveWithNested(int insertedMemberId) {
+    public int saveWithNested(Long insertedMemberId) {
         InsertRoleDto MybatisRole = InsertRoleDto.createRole(insertedMemberId, "mybatis-NESTED-name-test");
         roleMapper.setRole(MybatisRole);
 
@@ -58,7 +60,7 @@ public class RoleService {
     }
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    public int saveWithNotSupported(int insertedMemberId) {
+    public int saveWithNotSupported(Long insertedMemberId) {
         InsertRoleDto MybatisRole = InsertRoleDto.createRole(insertedMemberId, "mybatis-NOT_SUPPORTED-name-test");
         roleMapper.setRole(MybatisRole);
 

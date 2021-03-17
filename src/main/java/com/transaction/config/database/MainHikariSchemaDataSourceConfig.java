@@ -10,6 +10,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -43,17 +44,22 @@ public class MainHikariSchemaDataSourceConfig extends DatabaseConfig {
     }
 
 
-
-
-
-
     /* -----------------mybatis 셋팅------------------------------------- */
+
+/*    @Bean(name = name + "SessionFactory")
+    @Primary
+    public SqlSessionFactory sqlSessionFactory(@Qualifier(name + "DataSource") DataSource dataSource) throws Exception {
+        SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
+        setConfigureSqlSessionFactory(sessionFactoryBean, dataSource);
+        return sessionFactoryBean.getObject();
+    }*/
 
     @Bean(name = name + "SessionFactory")
     @Primary
     public SqlSessionFactory sqlSessionFactory(@Qualifier(name + "DataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
-        setConfigureSqlSessionFactory(sessionFactoryBean, dataSource);
+        sessionFactoryBean.setDataSource(dataSource);
+
         return sessionFactoryBean.getObject();
     }
 
@@ -81,20 +87,34 @@ public class MainHikariSchemaDataSourceConfig extends DatabaseConfig {
 
 
     /* -----------------JPA 셋팅------------------------------------- */
+//    @Bean(name = name + "EntityManagerFactory")
+//    @Primary
+//    public EntityManagerFactory entityManagerFactory(@Qualifier(name + "DataSource") DataSource dataSource) {
+//        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+//        factory.setDataSource(dataSource);
+//        factory.setPackagesToScan("com.transaction.entities");
+//        factory.setPersistenceUnitName(name);
+//        setConfigureEntityManagerFactory(factory);
+//
+//        return factory.getObject();
+//    }
+
+// 컨테이너가 관리하는 EntityManagerFactory를 생성.
     @Bean(name = name + "EntityManagerFactory")
     @Primary
-    public EntityManagerFactory entityManagerFactory(@Qualifier(name + "DataSource") DataSource dataSource) {
-        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-        factory.setDataSource(dataSource);
-        factory.setPackagesToScan("com.transaction.entities");
-        factory.setPersistenceUnitName(name);
-        setConfigureEntityManagerFactory(factory);
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder, @Qualifier(name + "DataSource") DataSource dataSource) {
 
-        return factory.getObject();
+
+        return builder
+                .dataSource(dataSource)
+                .packages("com.transaction.entities")
+                .persistenceUnit(name)
+                .build();
     }
 
+
     @Bean(name = name + "TransactionManager")
-    @Primary
+    //@Primary
     public PlatformTransactionManager transactionManager(@Qualifier(name + "EntityManagerFactory") EntityManagerFactory entityManagerFactory) {
         JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
         jpaTransactionManager.setEntityManagerFactory(entityManagerFactory);

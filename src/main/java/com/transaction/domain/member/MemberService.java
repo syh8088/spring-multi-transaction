@@ -11,6 +11,9 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 @RequiredArgsConstructor
 //@Transactional(transactionManager = "mainTransactionManager")
 //@Transactional(transactionManager = "subTransactionManager")
+
+//@Transactional
+//@Transactional(propagation = Propagation.REQUIRES_NEW)
 public class MemberService {
 
     private final MemberMapper memberMapper;
@@ -19,6 +22,7 @@ public class MemberService {
     //@Transactional(propagation = Propagation.REQUIRES_NEW)
     public Member saveWithRequired() {
         System.out.println("LogicService --> currentTransactionName : {}  = " +  TransactionSynchronizationManager.getCurrentTransactionName());
+
         Member member = Member.createMember("name-mybatis-test", 10);
         memberMapper.setMember(member);
 
@@ -27,6 +31,7 @@ public class MemberService {
 
     public Member jpaSaveWithRequired() {
         System.out.println("LogicService --> currentTransactionName : {}  = " +  TransactionSynchronizationManager.getCurrentTransactionName());
+        Member one = memberRepository.getOne(142L);
         Member member = Member.createMember("name-jpa-test", 10);
         memberRepository.save(member);
 

@@ -10,11 +10,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class InsertRoleDto {
-    private int id;
-    private int memberId;
+    private Long id;
+    private Long memberId;
     private String name;
 
-    public static InsertRoleDto createRole(int memberId, String name) {
+    public static InsertRoleDto createRole(Long memberId, String name) {
         InsertRoleDto insertRoleDto = new InsertRoleDto();
         insertRoleDto.setMemberId(memberId);
         insertRoleDto.setName(name);
