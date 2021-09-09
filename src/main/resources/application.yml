@@ -43,7 +43,8 @@ spring:
 
 
 
-#        hikari:
+
+        #        hikari:
 #            maximum-pool-size: 3
         tomcat:
             testOnBorrow: true
@@ -74,7 +75,7 @@ spring:
 
 
 mybatis:
-    type-aliases-package: com.transaction
+    #type-aliases-package: com.transaction
     mapper-locations: classpath*:/mapper/**/*.xml
     configuration:
         map-underscore-to-camel-case: true

@@ -11,12 +11,12 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 @Service
 @RequiredArgsConstructor
 //@Transactional(transactionManager = "mainTransactionManager")
-//@Transactional(transactionManager = "subTransactionManager")
+@Transactional(transactionManager = "subTransactionManager")
 public class RoleService {
 
     private final RoleMapper roleMapper;
     private final RoleRepository roleRepository;
-
+    @Transactional(transactionManager = "subTransactionManager", propagation = Propagation.REQUIRES_NEW)
     public void saveWithRequired(Long insertedMemberId) {
         System.out.println("LogicService --> currentTransactionName : {}  = " +  TransactionSynchronizationManager.getCurrentTransactionName());
         InsertRoleDto role = InsertRoleDto.createRole(insertedMemberId, "mybatis-name-test");

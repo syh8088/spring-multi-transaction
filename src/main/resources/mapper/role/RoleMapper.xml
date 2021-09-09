@@ -3,16 +3,18 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.transaction.domain.role.RoleMapper">
-    <insert id="setRole">
-        INSERT INTO DB_TEST2.role2 SET
-            member_id = #{memberId},
-            name = #{name}
-    </insert>
-
 <!--    <insert id="setRole">-->
-<!--        INSERT INTO syh80882.role2 SET-->
+<!--        INSERT INTO DB_TEST2.role2 SET-->
 <!--            member_id = #{memberId},-->
 <!--            name = #{name}-->
 <!--    </insert>-->
+
+
+<!--    &#45;&#45;         INSERT INTO syh80882.role2 SET-->
+    <insert id="setRole">
+        INSERT INTO zeyo_dev.role2 SET
+            member_id = #{memberId},
+            name = #{name}
+    </insert>
 
 </mapper>
